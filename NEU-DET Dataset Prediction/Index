@@ -1,0 +1,17 @@
+This project implements deep learning models for defect classification on the NEU-DET dataset from Kaggle using TensorFlow.
+Dataset: The NEU-DET dataset contains grayscale images of six different types of surface defects found in steel strips.
+Classes:Crazing, Inclusion, Patches, Pitted Surface, Rolled-in Scale, Scratches
+
+Source: Kaggle – NEU Surface Defect Detection Dataset
+The experiments compare:
+Data augmentation vs. no augmentation
+
+Custom CNN vs. transfer learning using VGG16 (no augmentation)
+
+Model architectures:
+Custom CNN
+VGG16-based transfer learning model
+
+Optimizers:
+Adam
+SGD
