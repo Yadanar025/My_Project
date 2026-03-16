@@ -1,0 +1,12 @@
+**Decription** : 
+The project is about predicting the dropout and attendance rates of MMDT students based on their demographics, expected effort, and interest. The model is built using past data from MMDT students..
+
+**File Detailed Explanation** : 
+
+Data Cleaning : The related code for the data cleaning for the given data.
+
+Classification Drop Out : Creating and testing with different type of model for the drop out prediction with classification.
+
+Regression Attendance Rate : Creating and testing with different type of model for the attendance rate prediction with regression.
+
+Streamlit : Dashboard for the Prediction using the best model tested from the above.
