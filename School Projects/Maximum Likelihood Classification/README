@@ -1,0 +1,32 @@
+Overview
+This project implements a pixel-based image classification system for satellite imagery using the Maximum Likelihood Classification (MLC) algorithm. 
+Each pixel is represented by its RGB values and classified into predefined surface categories based on statistical modeling.
+The goal is to transform raw image data into a structured and meaningful classification map.
+Each pixel is represented as:
+x = [R, G, B]
+Classes: Sea, Tree, Road, Field, Sand
+
+Objectives
+Classify satellite image pixels into distinct surface classes
+Apply a Gaussian probabilistic model for classification
+Analyze how training sample selection affects classification accuracy
+Compare different sampling strategies for better results
+This project classifies a satellite image using the Maximum Likelihood Classification (MLC) method.
+
+Process
+Select sample pixels for each class
+Compute mean and covariance
+Classify each pixel based on probability
+
+Sampling
+Random sampling
+Manual click sampling
+Coordinate-based sampling
+
+✔ Best result: Coordinate-based sampling
+
+📈 Results
+Good separation: Sea, Sand
+Some overlap: Tree, Field
+
+Tech - Python, NumPy, OpenCV, Matplotlib
