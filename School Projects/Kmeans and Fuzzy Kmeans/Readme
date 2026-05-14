@@ -1,1 +1,18 @@
-This is about kmean and fuzzy kmean
+Overview
+
+This project applies unsupervised machine learning techniques to classify satellite images using clustering algorithms implemented from scratch in Python.
+The following methods were compared:K-Means, K-Means with Mahalanobis Distance, Fuzzy K-Means, Fuzzy K-Means with Mahalanobis Distance, RGB and HSV color spaces
+The goal is to segment the image into 5 clusters based on color similarity.
+
+Technologies : Python, NumPy, OpenCV, Matplotlib, Methods, K-Means
+
+Clusters pixels by minimizing the distance between pixels and cluster centroids.
+Mahalanobis Distance : Improves clustering by considering covariance between features:
+
+Fuzzy K-Means allows pixels to belong to multiple clusters with different membership values, improving segmentation in mixed regions.
+
+Results
+HSV features improved region separation.
+Mahalanobis distance improved clustering performance.
+Fuzzy K-Means produced smoother segmentation boundaries.
+Best results were achieved using Fuzzy K-Means with Mahalanobis Distance.
