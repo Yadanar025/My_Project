@@ -10,9 +10,7 @@
 ---
 
 ## Student Information 
-- **Name:** Khin Yadanar Aung
-- **MMDT ID:** MMDT002
-- **Telegram:** Yadanar
+- **Name:** Khin Yadanar Aung 
 
 ---
 
