@@ -1,15 +1,3 @@
-"""
-MMDT Class Scheduling Project - Main Entry Point
-
-Instructions for Students:
-1. You have complete flexibility in how you design your project folder structure, classes, and helper modules.
-2. Implement your scheduling logic inside or called from `studentscheduler()`.
-3. Your scheduler should read data dynamically from `data_dir` (default: 'data').
-   - If we change or replace the datasets in `data/`, your solution should still work dynamically.
-4. Your scheduler must generate the final timetable and save it as `<studentid>_timetable.csv` inside `output_dir` (default: 'data').
-5. The function `studentscheduler()` must return the path to the created CSV file.
-6. In your report and video presentation, explain how your project directory and architecture are built.
-"""
 
 import os
 import re
@@ -18,8 +6,6 @@ import scheduler_core
 import scheduler_solver
 import scheduler_penalty
 
-# TODO: Import your custom modules, solvers, or constraint models here.
-# Example: from my_scheduler.csp import CSPSolver
 
 def get_student_id():
     """
@@ -60,7 +46,7 @@ def studentscheduler(data_dir="data", output_dir="data", student_id=None):
     output_path = os.path.join(output_dir, output_filename)
 
     # =========================================================================
-    # TODO: Implement your CSP / Local Search scheduling solution below.
+    # TODO: Implement CSP / Local Search scheduling solution below.
     #
     # 1. Load data from data_dir (e.g., courses.csv, instructors.csv, rooms.csv, time_slots.csv, student_cohorts.csv).
     domains, course_cohort, slot_info, name_to_id, room_id, cohort_size = scheduler_core.build_domain(data_dir)
