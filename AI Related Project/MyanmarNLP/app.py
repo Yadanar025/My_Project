@@ -1,16 +1,4 @@
-"""
-MMDT Myanmar NLP (MNLP) Project: Myanmar Text Claim Verification & Evidence Retrieval - Main Entry Point
 
-Instructions for Students:
-1. You have complete flexibility in how you design your project folder structure, classes, and helper modules.
-2. Build your custom Myanmar reference corpus (corpus.csv) and curate at least 50 Myanmar claims (claims.csv / train_claims.csv / test_claims.csv).
-3. Implement your Myanmar NLP verification and retrieval pipeline inside or called from `studentverifier()`.
-4. Your verifier should read data dynamically from `data_dir` (default: 'data') using UTF-8 encoding.
-   - If datasets in `data/` are updated or replaced, your solution should still work dynamically.
-5. Your system must generate the final prediction file and save it as `<studentid>_predictions.csv` inside `output_dir` (default: 'data').
-6. The function `studentverifier()` must return the path to the created CSV file.
-7. In your report and video presentation, explain how your project directory, Myanmar syllable/word tokenization, TF-IDF vectorizer, Naïve Bayes classifier, and semantic retrieval/RAG pipelines are built.
-"""
 
 import os
 import re
@@ -19,19 +7,10 @@ import pandas as pd
 import preprocessing
 import tfidf
 
-# TODO: Import your custom Myanmar NLP modules, tokenizers, vectorizers, classifiers, or RAG modules here.
-# Example:
-# from mnlp_engine.preprocessor import clean_myanmar_text, syllable_tokenizer
-# from mnlp_engine.naive_bayes import MultinomialNaiveBayesClassifier
-# from mnlp_engine.retriever import MyanmarSemanticRetriever
-# from mnlp_engine.rag_verifier import MyanmarRAGClaimVerifier
 
 
 def get_student_id():
-    """
-    Helper function to extract your MMDT ID from report.md.
-    Alternatively, you may specify your student ID directly.
-    """
+
     report_path = os.path.join(os.path.dirname(__file__), 'report.md')
     if os.path.exists(report_path):
         try:
@@ -74,7 +53,6 @@ def studentverifier(data_dir="data", output_dir="data", student_id=None):
     output_path = os.path.join(output_dir, output_filename)
 
     # =========================================================================
-    # TODO: Implement your Myanmar NLP Claim Verification & Retrieval Pipeline below.
     #
     # 1. Load corpus.csv, train_claims.csv, and test_claims.csv dynamically with utf-8 encoding.
     top_k = 5
