@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 30px;
+    }
+    .controls {
+        margin-bottom: 20px;
+    }
+    .controls select, .controls input, .controls button {
+        font-size: 16px;
+        padding: 6px;
+        margin: 4px;
+    }
+    #board {
+        display: grid;
+        grid-template-columns: repeat(8, 80px);
+        grid-template-rows: repeat(8, 80px);
+        gap: 5px;
+        justify-content: center;
+        margin: 20px auto;
+    }
+    #board .cell {
+        width: 50px; height: 50px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px; font-weight: bold;
+        border: none;
+    }
+    .dark { background: #555; cursor: pointer; }
+    .light { background: #ddd; }
+    .piece-W { color: white; background: radial-gradient(circle, #eee 40%, #555 42%); }
+    .piece-B { color: black; background: radial-gradient(circle, #222 40%, #555 42%); }
+    .piece-KW { color: gold; background: radial-gradient(circle, #eee 40%, #555 42%); }
+    .piece-KB { color: gold; background: radial-gradient(circle, #222 40%, #555 42%); }
+    .selected { outline: 3px solid yellow; }
+    </style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myanmar Checkers</title>
+</head>
+
+<body>
+    <h1>Myanmar Checkers</h1>
+    <p>Play against your AI agent!</p>
+    <select id="mode">
+    <option value="2player">2 Player Local</option>
+    <option value="random">vs AI (Easy)</option>
+    <option value="heuristic">vs AI (Medium)</option>
+    <option value="minimax">vs AI (Hard)</option>
+</select>
+    <select id="agentX">
+    <option value="random">Random</option>
+    <option value="heuristic">Heuristic</option>
+    <option value="minimax">Minimax</option>
+</select>
+<select id="agentO">
+    <option value="random">Random</option>
+    <option value="heuristic">Heuristic</option>
+    <option value="minimax">Minimax</option>
+</select>
+<button id="startAiVsAi">Start AI vs AI</button>
+    <select id="benchAgent1">
+    <option value="random">Random</option>
+    <option value="heuristic">Heuristic</option>
+    <option value="minimax">Minimax</option>
+    </select>
+    <select id="benchAgent2">
+        <option value="random">Random</option>
+        <option value="heuristic">Heuristic</option>
+        <option value="minimax">Minimax</option>
+    </select>
+    <input id="numGames" type="number" value="50">
+    <button id="runBenchmark">Run Benchmark</button>
+    <p id="benchmarkResult"></p>
+    <p id="status"></p>
+    <pre id="stats"></pre>
+    <div id="board">
+    <script>
+        const boardEl = document.getElementById("board");
+        let board = Array(64).fill(" ");
+        let currentPlayer = "W";
+        let gameOver = false;
+        let legalMoves = [];
+        let selected = null;
+
+        function cellEl(row, col) {
+            return boardEl.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+        }
+
+    function buildGrid() {
+        boardEl.innerHTML = "";
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                const div = document.createElement("div");
+                div.className = "cell " + ((row + col) % 2 === 1 ? "dark" : "light");
+                div.dataset.row = row;
+                div.dataset.col = col;
+                if ((row + col) % 2 === 1) {
+                    div.addEventListener("click", () => onCellClick(row, col));
+                }
+                boardEl.appendChild(div);
+            }
+        }
+    }
+
+    function redraw() {
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                const sym = board[row * 8 + col];
+                const el = cellEl(row, col);
+                el.className = "cell " + ((row + col) % 2 === 1 ? "dark" : "light");
+                el.textContent = "";
+                if (sym && sym !== " ") {
+                    el.classList.add("piece-" + sym);
+                    if (sym === "KW" || sym === "KB") {
+                        el.textContent = "♛";
+                    }
+                }
+
+                if (selected && selected[0] === row && selected[1] === col) {
+                    el.classList.add("selected");
+                }
+            }
+        }
+        document.getElementById("status").textContent =
+            gameOver ? "Game over" : (currentPlayer === "W" ? "White's turn" : "Black's turn");
+    }
+
+    function refreshLegalMoves() {
+        fetch("/legal_moves", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ board: board, current_player: currentPlayer })
+        })
+        .then(r => r.json())
+        .then(data => { legalMoves = data.available_moves; });
+    }
+
+    function onCellClick(row, col) {
+        if (gameOver) return;
+        const mode = document.getElementById("mode").value;
+
+        if (!selected) {
+            const hasMove = legalMoves.some(m => m[0] === row && m[1] === col);
+            if (hasMove) selected = [row, col];
+            redraw();
+            return;
+        }
+
+        const match = legalMoves.find(m =>
+            m[0] === selected[0] && m[1] === selected[1] && m[2] === row && m[3] === col
+        );
+
+        if (match) {
+            const payload = { board: board, current_player: currentPlayer, move: match };
+            if (mode !== "2player") payload.agent_type = mode;
+
+            fetch("/play", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                board = data.board;
+                currentPlayer = data.current_player;
+                gameOver = data.game_over;
+                legalMoves = data.available_moves;
+                selected = null;
+                redraw();
+                if (data.move_scores) {
+                    document.getElementById("stats").textContent =
+                        "Nodes explored: " + data.nodes_explored + "\nMove scores: " + JSON.stringify(data.move_scores);
+                }
+                if (gameOver) {
+                    alert(data.winner ? data.winner + " wins!" : "Draw!");
+                }
+            });
+        } else {
+            selected = (row === selected[0] && col === selected[1]) ? null : selected;
+            const hasMove = legalMoves.some(m => m[0] === row && m[1] === col);
+            selected = hasMove ? [row, col] : null;
+            redraw();
+        }
+    }
+
+    function resetGame() {
+        board = [];
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                if ((row + col) % 2 === 1) {
+                    board.push(row <= 2 ? "W" : (row >= 5 ? "B" : " "));
+                } else {
+                    board.push(" ");
+                }
+            }
+        }
+        currentPlayer = "W";
+        gameOver = false;
+        selected = null;
+        redraw();
+        refreshLegalMoves();
+    }
+
+    function aiStep() {
+        fetch("/ai_move", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                board: board,
+                current_player: currentPlayer,
+                agent_x_type: document.getElementById("agentX").value,
+                agent_o_type: document.getElementById("agentO").value
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            board = data.board;
+            currentPlayer = data.current_player;
+            gameOver = data.game_over;
+            redraw();
+            if (!gameOver) {
+                setTimeout(aiStep, 500);
+            } else {
+                alert(data.winner ? data.winner + " wins!" : "Draw!");
+            }
+        });
+    }
+
+    document.getElementById("startAiVsAi").addEventListener("click", function() {
+        resetGame();
+        aiStep();
+    });
+
+    document.getElementById("runBenchmark").addEventListener("click", function() {
+        fetch("/benchmark", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                agent1_type: document.getElementById("benchAgent1").value,
+                agent2_type: document.getElementById("benchAgent2").value,
+                num_games: parseInt(document.getElementById("numGames").value)
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("benchmarkResult").textContent =
+                "Agent1 wins: " + data.agent1_wins + ", Agent2 wins: " + data.agent2_wins + ", Draws: " + data.draws;
+        });
+    });
+
+    buildGrid();
+    resetGame();
+    </script>
+</body>
+</html>
